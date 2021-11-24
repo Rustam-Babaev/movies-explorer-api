@@ -1,8 +1,8 @@
-/* eslint-disable space-before-function-paren */
 /* eslint-disable func-names */
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const validator = require('validator');
+const { notCorrectEmailOrPasswordMessage, notCorrectEmailMessage } = require('../constants/constants');
 
 const userSchema = new mongoose.Schema({
     email: {
@@ -15,7 +15,7 @@ const userSchema = new mongoose.Schema({
             validator(email) {
                 return validator.isEmail(email);
             },
-            message: (props) => `${props.value} неккоректный email`,
+            message: (props) => `${props.value} ${notCorrectEmailMessage}`,
         },
     },
     password: {
@@ -29,14 +29,15 @@ const userSchema = new mongoose.Schema({
         type: String,
         minlength: 2,
         maxlength: 30,
+        required: true,
     },
 
 });
 
-userSchema.statics.findUserByCredentials = function(email, password) {
+userSchema.statics.findUserByCredentials = function (email, password) {
     return this.findOne({ email }).select('+password')
         .then((user) => {
-            const customError = new Error('Неправильные почта или пароль');
+            const customError = new Error(notCorrectEmailOrPasswordMessage);
             customError.statusCode = 401;
             if (!user) {
                 return Promise.reject(customError);

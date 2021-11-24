@@ -1,9 +1,10 @@
 const { celebrate, Joi } = require('celebrate');
 const validator = require('validator');
+const { notCorrectLinkMessage } = require('../constants/constants');
 
 const validateURL = (value) => {
     if (!validator.isURL(value, { require_protocol: true })) {
-        throw new Error('Неправильный формат ссылки');
+        throw new Error(notCorrectLinkMessage);
     }
     return value;
 };
@@ -19,13 +20,13 @@ const registrationValidator = celebrate({
     body: Joi.object().keys({
         email: Joi.string().required().email(),
         password: Joi.string().required().min(8),
-        name: Joi.string().min(2).max(30),
+        name: Joi.string().required().min(2).max(30),
     }),
 });
 
 const idMovieValidator = celebrate({
     params: Joi.object().keys({
-        movieId: Joi.string().hex().length(24),
+        movieId: Joi.number(),
     }),
 });
 
@@ -40,7 +41,7 @@ const movieValidator = celebrate({
         trailer: Joi.string().required().custom(validateURL, 'custom validation for links'),
         thumbnail: Joi.string().required().custom(validateURL, 'custom validation for links'),
         owner: Joi.string().required().hex().length(24),
-        movieId: Joi.string().required().hex().length(24),
+        movieId: Joi.number().required(),
         nameRU: Joi.string().required(),
         nameEN: Joi.string().required(),
 

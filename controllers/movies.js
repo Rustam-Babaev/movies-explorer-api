@@ -1,10 +1,14 @@
-/* eslint-disable indent */
 const Movie = require('../models/movie');
 const NotFoundError = require('../errors/not-found-err');
 const ValidationError = require('../errors/validation-err');
 const NoRightsError = require('../errors/no-rights-error');
+const {
+    noMovieMessage,
+    notCorrectDataMovieMessage,
+    notCorrectIdMessage,
+} = require('../constants/constants');
 
-const NotFoundMovieError = () => { throw new NotFoundError('Нет фильма по заданному id'); };
+const NotFoundMovieError = () => { throw new NotFoundError(noMovieMessage); };
 
 const getMovie = (req, res, next) => {
     Movie.find({})
@@ -28,24 +32,24 @@ const createMovie = (req, res, next) => {
         movieId,
     } = req.body;
     Movie.create({
-            country,
-            director,
-            duration,
-            year,
-            description,
-            image,
-            trailer,
-            nameRU,
-            nameEN,
-            thumbnail,
-            movieId,
-            owner: req.user,
-        })
+        country,
+        director,
+        duration,
+        year,
+        description,
+        image,
+        trailer,
+        nameRU,
+        nameEN,
+        thumbnail,
+        movieId,
+        owner: req.user,
+    })
         .then((movie) => res.send({ data: movie }))
         .catch((err) => {
             let customError = err;
             if (err.name === 'ValidationError') {
-                customError = new ValidationError('Переданы некорректные данные при создании фильма.');
+                customError = new ValidationError(notCorrectDataMovieMessage);
             }
             next(customError);
         });
@@ -57,49 +61,19 @@ const deleteMovie = (req, res, next) => {
         .then((movie) => {
             if (movie.owner.toString() !== req.user._id) {
                 throw new NoRightsError();
+            } else {
+                return movie.delete(req.params.movieId)
+                    .then((film) => res.send(film));
             }
-        })
-        .then(() => {
-            Movie.findByIdAndDelete(req.params.movieId)
-                .orFail(NotFoundMovieError)
-                .then((movie) => res.send(movie));
         })
         .catch((err) => {
             let customError = err;
             if (err.name === 'CastError') {
-                customError = new ValidationError('передан невалидный id.');
+                customError = new ValidationError(notCorrectIdMessage);
             }
             next(customError);
         });
 };
-
-// const putLike = (req, res, next) => {
-//   Card.findByIdAndUpdate(
-//           req.params.cardId, { $addToSet: { likes: req.user._id } }, { new: true, runValidators: true },
-//       )
-//       .orFail(NotFoundCardError)
-//       .then((card) => res.send(card))
-//       .catch((err) => {
-//           let customError = err;
-//           if (err.name === 'ValidationError') { customError = new ValidationError('Переданы некорректные данные для постановки/снятии лайка.'); }
-//           if (err.name === 'CastError') { customError = new ValidationError('Передан невалидный id.'); }
-//           next(customError);
-//       });
-// };
-
-// const deleteLike = (req, res, next) => {
-//   Card.findByIdAndUpdate(
-//           req.params.cardId, { $pull: { likes: req.user._id } }, { new: true, runValidators: true },
-//       )
-//       .orFail(NotFoundCardError)
-//       .then((card) => res.send(card))
-//       .catch((err) => {
-//           let customError = err;
-//           if (err.name === 'ValidationError') { customError = new ValidationError('Переданы некорректные данные для постановки/снятии лайка.'); }
-//           if (err.name === 'CastError') { customError = new ValidationError('Передан невалидный id.'); }
-//           next(customError);
-//       });
-// };
 
 module.exports = {
     getMovie,

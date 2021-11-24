@@ -5,8 +5,16 @@ const { JWT_SECRET = 'dev-key' } = process.env;
 const User = require('../models/user');
 const NotFoundError = require('../errors/not-found-err');
 const ValidationError = require('../errors/validation-err');
+const ConflictError = require('../errors/conflict-errors');
+const {
+    notCorrectIdMessage,
+    noUserMessage,
+    notCorrectDataUserMessage,
+    emailBusyMessage,
+    conflictMessage,
+} = require('../constants/constants');
 
-const NotFoundUserError = () => { throw new NotFoundError('Пользователь по указанному _id не найден.'); };
+const NotFoundUserError = () => { throw new NotFoundError(noUserMessage); };
 
 const createUser = (req, res, next) => {
     const {
@@ -20,19 +28,17 @@ const createUser = (req, res, next) => {
             password: hash,
             name,
         }))
-        // eslint-disable-next-line no-param-reassign
+
         .then((user) => {
-            // eslint-disable-next-line no-param-reassign
-            user.password = 'Успешно сохранен';
-            res.send(user);
+            res.send({ _id: user._id, email: user.email, name: user.name });
         })
         .catch((err) => {
             let customError = err;
             if (err.name === 'ValidationError') {
-                customError = new ValidationError('Переданы некорректные данные при создании пользователя.');
+                customError = new ValidationError(notCorrectDataUserMessage);
             }
             if (customError.code === 11000) {
-                customError = new Error('Данная почта уже зарегистрированна');
+                customError = new Error(emailBusyMessage);
                 customError.statusCode = 409;
             }
             next(customError);
@@ -47,10 +53,13 @@ const changeProfile = (req, res, next) => {
         .catch((err) => {
             let customError = err;
             if (err.name === 'CastError') {
-                customError = new ValidationError('передан невалидный id.');
+                customError = new ValidationError(notCorrectIdMessage);
             }
             if (err.name === 'ValidationError') {
-                customError = new ValidationError('Переданы некорректные данные при обновлении профиля.');
+                customError = new ValidationError(notCorrectDataUserMessage);
+            }
+            if (err.name === 'MongoServerError') {
+                customError = new ConflictError(conflictMessage);
             }
             next(customError);
         });
@@ -90,11 +99,7 @@ const getOwner = (req, res, next) => {
         .orFail(NotFoundUserError)
         .then((user) => res.send(user))
         .catch((err) => {
-            let customError = err;
-            if (err.name === 'CastError') {
-                customError = new ValidationError('передан невалидный id.');
-            }
-            next(customError);
+            next(err);
         });
 };
 

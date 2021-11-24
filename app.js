@@ -9,41 +9,35 @@ const limiter = require('./constants/limiter');
 const corsOptions = require('./constants/cors');
 const routerApp = require('./routes/index');
 const handlerErrors = require('./errors/handler-errors');
-const { login, createUser } = require('./controllers/users');
-const auth = require('./middlewares/auth');
-const { requestLogger, errorLogger } = require('./middlewares/logger');
-const { loginValidator, registrationValidator } = require('./validation/movie-validation');
+const { notCorrectLinkMessage, crashServerMessage } = require('./constants/constants');
 
-const { PORT = 3000, MONGO = 'mongodb://localhost:27017/dev' } = process.env;
+const { requestLogger, errorLogger } = require('./middlewares/logger');
+
+const { PORT = 3000, MONGO = 'mongodb://localhost:27017/moviesdb' } = process.env;
 const app = express();
 
 mongoose.connect(MONGO, {
     useNewUrlParser: true,
 });
 app.use(cors(corsOptions));
+app.use(requestLogger);
 app.use(limiter);
 app.use(helmet());
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(requestLogger);
 
 app.get('/crash-test', (req, res, next) => {
     setTimeout(() => {
-        const customError = new Error('Сервер сейчас упадёт');
+        const customError = new Error(crashServerMessage);
         customError.statusCode = 521;
         next(customError);
     }, 0);
 });
 
-app.post('/signin', loginValidator, login);
-app.post('/signup', registrationValidator, createUser);
-
-app.use(auth);
-
 app.use('/', routerApp);
 app.use('/', (req, res, next) => {
-    const customError = new Error('введен некорректный url');
+    const customError = new Error(notCorrectLinkMessage);
     customError.statusCode = 404;
     next(customError);
 });

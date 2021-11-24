@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
+const { notCorrectLinkMessage } = require('../constants/constants');
 
 const cardSchema = new mongoose.Schema({
 
@@ -30,7 +31,7 @@ const cardSchema = new mongoose.Schema({
             validator(link) {
                 return validator.isURL(link);
             },
-            message: (props) => `${props.value} неккоректный ссылка`,
+            message: (props) => `${props.value} ${notCorrectLinkMessage}`,
         },
     },
     trailer: {
@@ -40,7 +41,7 @@ const cardSchema = new mongoose.Schema({
             validator(link) {
                 return validator.isURL(link);
             },
-            message: (props) => `${props.value} неккоректный ссылка`,
+            message: (props) => `${props.value} ${notCorrectLinkMessage}`,
         },
     },
     thumbnail: {
@@ -50,7 +51,7 @@ const cardSchema = new mongoose.Schema({
             validator(link) {
                 return validator.isURL(link);
             },
-            message: (props) => `${props.value} неккоректный ссылка`,
+            message: (props) => `${props.value} ${notCorrectLinkMessage}`,
         },
     },
 
@@ -60,7 +61,7 @@ const cardSchema = new mongoose.Schema({
         required: true,
     },
     movieId: {
-        type: String,
+        type: Number,
         required: true,
     },
     nameRU: {
