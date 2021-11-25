@@ -1,8 +1,10 @@
+const { noRightsMessage } = require('../constants/constants');
+
 class NoRightsError extends Error {
-    constructor(message = 'Недостаточно прав') {
-        super(message);
-        this.statusCode = 403;
-    }
+  constructor(message = noRightsMessage) {
+    super(message);
+    this.statusCode = 403;
+  }
 }
 
 module.exports = NoRightsError;

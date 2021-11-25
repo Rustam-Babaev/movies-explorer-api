@@ -9,17 +9,23 @@ const notCorrectLinkMessage = 'Неправильный формат ссылк�
 const crashServerMessage = 'Неправильный формат ссылки';
 const notCorrectEmailOrPasswordMessage = 'Неправильные почта или пароль';
 const notCorrectEmailMessage = 'неккоректный email';
+const noAuthMessage = 'Необходима авторизация';
+const serverErrorMessage = 'На сервере произошла ошибка';
+const noRightsMessage = 'На сервере произошла ошибка';
 
 module.exports = {
-    noMovieMessage,
-    notCorrectDataMovieMessage,
-    notCorrectIdMessage,
-    noUserMessage,
-    notCorrectDataUserMessage,
-    emailBusyMessage,
-    conflictMessage,
-    notCorrectLinkMessage,
-    crashServerMessage,
-    notCorrectEmailOrPasswordMessage,
-    notCorrectEmailMessage,
+  noMovieMessage,
+  notCorrectDataMovieMessage,
+  notCorrectIdMessage,
+  noUserMessage,
+  notCorrectDataUserMessage,
+  emailBusyMessage,
+  conflictMessage,
+  notCorrectLinkMessage,
+  crashServerMessage,
+  notCorrectEmailOrPasswordMessage,
+  notCorrectEmailMessage,
+  noAuthMessage,
+  serverErrorMessage,
+  noRightsMessage,
 };

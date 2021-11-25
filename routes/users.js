@@ -1,8 +1,8 @@
 const router = require('express').Router();
 const {
-    getOwner,
-    changeProfile,
-    signOut,
+  getOwner,
+  changeProfile,
+  signOut,
 } = require('../controllers/users');
 const { usersValidator } = require('../validation/users-valitation');
 
