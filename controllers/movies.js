@@ -13,7 +13,6 @@ const NotFoundMovieError = () => { throw new NotFoundError(noMovieMessage); };
 const getMovies = (req, res, next) => {
   const owner = req.user._id;
   Movie.find({ owner })
-    .orFail(NotFoundMovieError)
     .then((movies) => res.status(200).send({ data: movies }))
     .catch(next);
 };

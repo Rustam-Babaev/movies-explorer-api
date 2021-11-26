@@ -40,7 +40,6 @@ const movieValidator = celebrate({
     image: Joi.string().required().custom(validateURL, 'custom validation for links'),
     trailer: Joi.string().required().custom(validateURL, 'custom validation for links'),
     thumbnail: Joi.string().required().custom(validateURL, 'custom validation for links'),
-    owner: Joi.string().required().hex().length(24),
     movieId: Joi.number().required(),
     nameRU: Joi.string().required(),
     nameEN: Joi.string().required(),

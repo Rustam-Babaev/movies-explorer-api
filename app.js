@@ -9,13 +9,16 @@ const limiter = require('./constants/limiter');
 const corsOptions = require('./constants/cors');
 const routerApp = require('./routes/index');
 const handlerErrors = require('./errors/handler-errors');
+const {
+  DATA_MOVIES,
+  PORT,
+} = require('./constants/configure');
 
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
-const { PORT = 3000, MONGO = 'mongodb://localhost:27017/moviesdb' } = process.env;
 const app = express();
 
-mongoose.connect(MONGO, {
+mongoose.connect(DATA_MOVIES, {
   useNewUrlParser: true,
 });
 app.use(cors(corsOptions));
