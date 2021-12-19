@@ -3,7 +3,6 @@ const validator = require('validator');
 const { notCorrectLinkMessage } = require('../constants/constants');
 
 const cardSchema = new mongoose.Schema({
-
   country: {
     type: String,
     required: true,
@@ -63,6 +62,7 @@ const cardSchema = new mongoose.Schema({
   movieId: {
     type: Number,
     required: true,
+    unique: true,
   },
   nameRU: {
     type: String,
@@ -72,7 +72,6 @@ const cardSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-
 });
 
 module.exports = mongoose.model('movie', cardSchema);
